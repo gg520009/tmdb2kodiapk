@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  seerr-bridge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: seerr-bridge
+    user: "0:0"
+    environment:
+      - NODE_ENV=production
+      - PORT=5055
+    ports:
+      - "5055:5055"
+    volumes:
+      - ./config:/app/config
+    restart: unless-stopped

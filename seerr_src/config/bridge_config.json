@@ -1,0 +1,31 @@
+{
+  "kodi": {
+    "ip": "192.168.6.217",
+    "port": 50868,
+    "username": "root",
+    "password": "lxg123123"
+  },
+  "sources": [
+    {
+      "id": "cineby",
+      "name": "Cineby",
+      "url": "https://www.cineby.at",
+      "enabled": true,
+      "isDefault": false
+    },
+    {
+      "id": "fmovies",
+      "name": "FMovies",
+      "url": "https://www.fmovies.gd",
+      "enabled": true,
+      "isDefault": true
+    },
+    {
+      "id": "cineplay",
+      "name": "Cineplay",
+      "url": "https://www.cineplay.to",
+      "enabled": true,
+      "isDefault": false
+    }
+  ]
+}
