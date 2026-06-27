@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 检出项目源码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: ☕ 设置 Java 17 环境
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -28,7 +28,7 @@ jobs:
           ./gradlew assembleDebug
 
       - name: 📤 上传生成的 APK 安装包
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: TMDB2Kodi-TV-v1.0.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
