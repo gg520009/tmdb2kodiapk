@@ -1,0 +1,17 @@
+{
+  "name": "tmdb2kodi-backend",
+  "version": "1.0.0",
+  "description": "Armbian TMDB to Kodi bridge server with multi-source video extraction",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

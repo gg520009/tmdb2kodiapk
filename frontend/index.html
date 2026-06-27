@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Armbian TMDB2Kodi Bridge (Jellyseerr Style)</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Jellyseerr Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🎬</div>
+      <div class="brand-text"><span>Armbian</span> TMDB2Kodi</div>
+    </div>
+
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a id="nav-discover" class="active" onclick="switchView('discover')">
+          <span>🏠</span> 探索首页
+        </a>
+      </li>
+      <li class="nav-item">
+        <a id="nav-movies" onclick="filterMediaType('movie')">
+          <span>🎬</span> 热门电影
+        </a>
+      </li>
+      <li class="nav-item">
+        <a id="nav-tv" onclick="filterMediaType('tv')">
+          <span>📺</span> 热门剧集
+        </a>
+      </li>
+      <li class="nav-item">
+        <a id="nav-library" onclick="switchView('library')">
+          <span>📚</span> 本地媒体库
+        </a>
+      </li>
+      <li class="nav-item">
+        <a id="nav-sources" onclick="switchView('sources')">
+          <span>🌐</span> 视频源设置
+        </a>
+      </li>
+      <li class="nav-item">
+        <a id="nav-settings" onclick="switchView('settings')">
+          <span>⚙️</span> Kodi 设置
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜索电影、电视剧、演员..." onkeyup="handleSearch(event)">
+      </div>
+
+      <div class="kodi-status-badge">
+        <div class="status-dot" id="kodiDot"></div>
+        <span id="kodiStatusText">检测 Kodi 中...</span>
+      </div>
+    </header>
+
+    <!-- View: Discover -->
+    <div id="view-discover">
+      <!-- Hero Banner -->
+      <div class="hero-backdrop" id="heroBackdrop" style="background-image: url('https://image.tmdb.org/t/p/original/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg');">
+        <div class="hero-content">
+          <div class="hero-meta">
+            <span class="badge-rating">★ 8.7</span>
+            <span>2014</span>
+            <span>科幻 / 冒险 / 剧情</span>
+          </div>
+          <h1 class="hero-title" id="heroTitle">Interstellar (星际穿越)</h1>
+          <p class="hero-overview" id="heroOverview">近未来的地球黄沙遍野，拯救人类的唯一希望是越过虫洞探寻宜居星球...</p>
+          <button class="btn btn-kodi" onclick="openMediaDetail('movie', 157336)">
+            ▶ 立即替换流并在电视 Kodi 播放
+          </button>
+        </div>
+      </div>
+
+      <!-- Content Grid Area -->
+      <div class="content-area">
+        <div class="section-title">
+          <span>🔥 热门影视推荐</span>
+        </div>
+        <div class="media-grid" id="mediaGrid">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- View: Local Library -->
+    <div id="view-library" class="content-area" style="display: none; padding-top: 2rem;">
+      <div class="section-title">
+        <span>📚 本地元数据与复刻收藏库</span>
+      </div>
+      <div class="media-grid" id="libraryGrid"></div>
+    </div>
+
+    <!-- View: Video Sources Management -->
+    <div id="view-sources" class="content-area" style="display: none; padding-top: 2rem;">
+      <div class="section-title">
+        <span>🌐 视频源管理 (Cineby, FMovies, Cineplay...)</span>
+        <button class="btn btn-primary" onclick="openAddSourceModal()">➕ 添加视频源</button>
+      </div>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+        管理用于提取视频媒体流的第三方源。支持动态添加、开启、禁用及修改。
+      </p>
+      <div id="sourceList" style="display:flex; flex-direction:column; gap:1rem;"></div>
+    </div>
+
+    <!-- View: Kodi Settings -->
+    <div id="view-settings" class="content-area" style="display: none; padding-top: 2rem;">
+      <div class="section-title">
+        <span>⚙️ Bridge 后端与 Kodi 参数设置</span>
+      </div>
+      <div style="max-width: 550px; background: var(--bg-card); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+        <form onsubmit="saveKodiSettings(event)">
+          <div class="form-group">
+            <label>Bridge 后端服务器地址 (例如 http://192.168.1.100:3000，留空默认本地)</label>
+            <input type="text" id="apiBaseUrl" placeholder="http://192.168.1.xxx:3000">
+          </div>
+          <div class="form-group">
+            <label>电视端 Kodi IP 地址</label>
+            <input type="text" id="kodiIp" placeholder="192.168.1.xxx" required>
+          </div>
+          <div class="form-group">
+            <label>HTTP JSON-RPC 端口 (默认 8080)</label>
+            <input type="number" id="kodiPort" value="8080" required>
+          </div>
+          <button type="submit" class="btn btn-kodi">💾 保存配置</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+      <div id="modalDetailContent" style="display:grid; grid-template-columns: 240px 1fr; gap: 2rem;"></div>
+    </div>
+  </div>
+
+  <!-- Source Modal -->
+  <div class="modal-backdrop" id="sourceModal">
+    <div class="modal-box" style="max-width: 480px;">
+      <button class="modal-close" onclick="closeModal('sourceModal')">✕</button>
+      <h3 style="margin-bottom: 1.2rem;" id="sourceModalTitle">➕ 添加新视频源</h3>
+      <form onsubmit="saveSource(event)">
+        <input type="hidden" id="sourceId">
+        <div class="form-group">
+          <label>视频源名称</label>
+          <input type="text" id="sourceName" required>
+        </div>
+        <div class="form-group">
+          <label>视频源 URL</label>
+          <input type="url" id="sourceUrl" required>
+        </div>
+        <button type="submit" class="btn btn-primary">💾 保存视频源</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

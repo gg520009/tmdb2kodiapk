@@ -1,0 +1,33 @@
+{
+  "jellyseerrUrl": "http://pan.local:5055",
+  "tmdb": {
+    "apiKey": "3fd2be6f0cd70463863140b953280d3a",
+    "language": "zh-CN"
+  },
+  "kodi": {
+    "ip": "192.168.1.100",
+    "port": 8080,
+    "username": "",
+    "password": ""
+  },
+  "sources": [
+    {
+      "id": "cineby",
+      "name": "Cineby",
+      "url": "https://www.cineby.at",
+      "enabled": true
+    },
+    {
+      "id": "fmovies",
+      "name": "FMovies",
+      "url": "https://www.fmovies.gd",
+      "enabled": true
+    },
+    {
+      "id": "cineplay",
+      "name": "Cineplay",
+      "url": "https://www.cineplay.to",
+      "enabled": true
+    }
+  ]
+}
