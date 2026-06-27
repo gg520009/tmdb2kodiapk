@@ -20,13 +20,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: 🤖 配置 Android SDK 环境与许可
+        uses: android-actions/setup-android@v3
+
       - name: ⚡ 同步前端 Web 资源到安卓工程
         run: python build_apk.py
 
       - name: 📦 Gradle 执行 APK 编译打包
         run: |
           cd android
-          gradle assembleDebug
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          gradle assembleDebug --stacktrace
 
       - name: 📤 上传生成的 APK 安装包
         uses: actions/upload-artifact@v4
